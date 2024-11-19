@@ -10,10 +10,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Загружаем OnboardFragment по умолчанию при первом запуске
-        if (savedInstanceState == null) {
-            loadFragment(OnboardFragment())
-        }
     }
 
     fun loadFragment(fragment: Fragment) {
