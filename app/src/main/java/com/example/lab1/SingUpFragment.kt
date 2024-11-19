@@ -35,13 +35,11 @@ class SignUpFragment : Fragment() {
             val password = passwordInput.text.toString()
 
             if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-                // Создание Bundle для передачи данных
                 val bundle = Bundle().apply {
                     putString("email", email)
                     putString("password", password)
                 }
 
-                // Переход на SignInFragment с передачей данных
                 val signInFragment = SignInFragment().apply {
                     arguments = bundle
                 }
