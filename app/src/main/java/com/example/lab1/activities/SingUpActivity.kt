@@ -1,4 +1,4 @@
-package com.example.lab1
+package com.example.lab1.activities
 
 import android.app.Activity
 import android.content.Intent
@@ -7,6 +7,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.example.lab1.R
+import com.example.lab1.User
 
 class SignUpActivity : AppCompatActivity() {
 

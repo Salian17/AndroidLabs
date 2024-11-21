@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/onboardFragment">
+
+    <fragment
+        android:id="@+id/onboardFragment"
+        android:name="com.example.lab1.fragments.OnboardFragment"
+        android:label="Onboard"
+        tools:layout="@layout/fragment_onboard">
+        <action
+            android:id="@+id/action_onboardFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.example.lab1.fragments.SignInFragment"
+        android:label="SignIn"
+        tools:layout="@layout/fragment_signin">
+        <argument
+            android:name="user"
+            app:argType="com.example.lab1.User"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_signInFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.lab1.fragments.SignUpFragment"
+        android:label="SignUp"
+        tools:layout="@layout/fragment_signup">
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.lab1.fragments.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+</navigation>
