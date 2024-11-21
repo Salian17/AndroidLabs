@@ -5,7 +5,7 @@
     android:background="@drawable/vecteezy_abstract_background_gradient_abstract_modern_background_6429746"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OnboardFragment">
+    tools:context=".fragments.OnboardFragment">
 
     <ImageView
         android:id="@+id/onboard_image"
