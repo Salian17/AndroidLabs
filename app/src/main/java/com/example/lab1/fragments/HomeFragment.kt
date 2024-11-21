@@ -13,7 +13,8 @@ import com.example.lab1.databinding.FragmentHomeBinding
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = (_binding
+        ?: RuntimeException("FragmentHomeBinding == null")) as FragmentHomeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
