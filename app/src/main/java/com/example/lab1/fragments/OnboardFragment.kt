@@ -11,7 +11,8 @@ import com.example.lab1.databinding.FragmentOnboardBinding
 class OnboardFragment : Fragment() {
 
     private var _binding: FragmentOnboardBinding? = null
-    private val binding get() = _binding!!
+    private val binding  get() = (_binding
+        ?: RuntimeException("FragmentOnboardBinding == null")) as FragmentOnboardBinding
 
 
     override fun onCreateView(

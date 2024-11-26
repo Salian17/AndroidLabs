@@ -13,7 +13,8 @@ import com.example.lab1.databinding.FragmentSignupBinding
 class SignUpFragment : Fragment() {
 
     private var _binding: FragmentSignupBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = (_binding
+        ?: RuntimeException("FragmentSignupBinding == null")) as FragmentSignupBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
