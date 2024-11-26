@@ -15,7 +15,7 @@ class SignInFragment : Fragment() {
 
     private var _binding: FragmentSigninBinding? = null
     private val binding get() = (_binding
-        ?: RuntimeException("FragmentSinginBinding == null")) as FragmentSigninBinding
+        ?: RuntimeException("FragmentSigninBinding == null")) as FragmentSigninBinding
     private val args: SignInFragmentArgs by navArgs()
 
     override fun onCreateView(
