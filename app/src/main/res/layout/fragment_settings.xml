@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/buttonGoToHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Назад на Главную"
+        app:layout_constraintTop_toBottomOf="@+id/switchTheme"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Switch
+        android:id="@+id/switch_theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Включить тёмную тему"
+        android:textSize="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <Switch
+        android:id="@+id/switchNotifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Уведомления"
+        android:textSize="16dp"
+        android:layout_marginTop="16dp"/>/>
+
+    <TextView
+        android:id="@+id/file_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:text="File Status"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/delete_file_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete File"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/restore_file_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Restore File"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>
