@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lab1.CharacterAdapter
-import com.example.lab1.R
 import com.example.lab1.RetrofitClient
 import com.example.lab1.databinding.FragmentHomeBinding
 import com.example.lab1.utils.saveCharactersToFile
@@ -70,7 +69,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.buttonGoToSettings.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
         }
     }
 
