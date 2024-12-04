@@ -42,17 +42,16 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fileName = "18_characters.txt"
-        updateFileStatus(fileName)
+        updateFileStatus()
 
         binding.deleteFileButton.setOnClickListener {
-            deleteFile(fileName)
-            updateFileStatus(fileName)
+            deleteAllFiles()
+            updateFileStatus()
         }
 
         binding.restoreFileButton.setOnClickListener {
-            restoreFile(fileName)
-            updateFileStatus(fileName)
+            restoreAllFiles()
+            updateFileStatus()
         }
 
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
@@ -60,6 +59,7 @@ class SettingsFragment : Fragment() {
                 saveThemeSetting(isChecked)
             }
         }
+
         sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         val isNotificationsEnabled = sharedPreferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, false)
@@ -97,35 +97,35 @@ class SettingsFragment : Fragment() {
         return preferences[PreferencesKeys.IS_DARK_MODE] ?: false
     }
 
-    private fun updateFileStatus(fileName: String) {
-        val fileExists = isFileExists(fileName)
-        binding.fileStatus.text = if (fileExists) "Файл существует" else "Файл не существует"
+    private fun updateFileStatus() {
+        val fileExists = areFilesPresent()
+        binding.fileStatus.text = if (fileExists) "Файлы существуют" else "Файлы не существуют"
         binding.deleteFileButton.isEnabled = fileExists
         binding.restoreFileButton.isEnabled = !fileExists
     }
 
-    private fun isFileExists(fileName: String): Boolean {
+    private fun areFilesPresent(): Boolean {
         val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val file = File(downloadsDir, fileName)
-        return file.exists()
+        val files = downloadsDir.listFiles { file -> file.name.matches(Regex("characters_page_\\d+\\.txt")) }
+        return !files.isNullOrEmpty()
     }
 
-    private fun deleteFile(fileName: String) {
+    private fun deleteAllFiles() {
         val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val file = File(downloadsDir, fileName)
-        if (file.exists()) {
+        val files = downloadsDir.listFiles { file -> file.name.matches(Regex("characters_page_\\d+\\.txt")) }
+        files?.forEach { file ->
             backupFile(file)
             file.delete()
         }
     }
 
-    private fun restoreFile(fileName: String) {
+    private fun restoreAllFiles() {
         val backupDir = requireContext().filesDir
-        val backupFile = File(backupDir, fileName)
+        val backupFiles = backupDir.listFiles { file -> file.name.matches(Regex("characters_page_\\d+\\.txt")) }
         val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val file = File(downloadsDir, fileName)
-        if (backupFile.exists()) {
-            backupFile.copyTo(file, overwrite = true)
+        backupFiles?.forEach { backupFile ->
+            val restoredFile = File(downloadsDir, backupFile.name)
+            backupFile.copyTo(restoredFile, overwrite = true)
         }
     }
 
