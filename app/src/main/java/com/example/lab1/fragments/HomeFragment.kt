@@ -23,6 +23,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var characterAdapter: CharacterAdapter
+    private var currentPage: Int = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,18 +38,28 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         characterAdapter = CharacterAdapter(emptyList())
-
         binding.recyclerViewChats.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = characterAdapter
         }
-        fetchCharacters()
 
+        fetchCharacters(currentPage)
+
+        binding.buttonGoToSettings.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
+        }
+
+        binding.refreshButton.setOnClickListener {
+            val pageInput = binding.ordinalNumberEditText.text.toString()
+            val page = pageInput.toIntOrNull() ?: 1
+            currentPage = page
+            fetchCharacters(currentPage)
+        }
         binding.saveButton.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val characters = characterAdapter.getCharacters()
-                    saveCharactersToFile(characters, "18_characters.txt")
+                    saveCharactersToFile(characters, "characters_page_$currentPage.txt")
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
                             requireContext(),
@@ -67,17 +78,12 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-        binding.buttonGoToSettings.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
-        }
     }
 
-    private fun fetchCharacters() {
+    private fun fetchCharacters(page: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val characters = RetrofitClient.api.getCharacters()
-
+                val characters = RetrofitClient.api.getCharacters(page = page, pageSize = 50)
                 withContext(Dispatchers.Main) {
                     characterAdapter = CharacterAdapter(characters)
                     binding.recyclerViewChats.adapter = characterAdapter
