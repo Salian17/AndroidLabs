@@ -8,7 +8,5 @@ interface CharacterApiService {
     suspend fun getCharacters(
         @Query("page") page: Int = 1,
         @Query("pageSize") pageSize: Int = 50,
-        @Query("fromId") fromId: Int = 851,
-        @Query("toId") toId: Int = 900
     ): List<Character>
 }

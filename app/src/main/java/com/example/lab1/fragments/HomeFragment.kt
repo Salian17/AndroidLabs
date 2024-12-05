@@ -6,14 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.lab1.AppDatabase
 import com.example.lab1.CharacterAdapter
+import com.example.lab1.CharacterRepository
+import com.example.lab1.R
 import com.example.lab1.RetrofitClient
 import com.example.lab1.databinding.FragmentHomeBinding
 import com.example.lab1.utils.saveCharactersToFile
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -23,7 +27,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var characterAdapter: CharacterAdapter
-    private var currentPage: Int = 1
+    private lateinit var characterRepository: CharacterRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,29 +41,27 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val database = AppDatabase.getDatabase(requireContext())
+        val characterDao = database.characterDao()
+        characterRepository = CharacterRepository(RetrofitClient.api, characterDao)
+
         characterAdapter = CharacterAdapter(emptyList())
         binding.recyclerViewChats.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = characterAdapter
         }
-
-        fetchCharacters(currentPage)
-
-        binding.buttonGoToSettings.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettingsFragment())
-        }
+        observeCharacters()
 
         binding.refreshButton.setOnClickListener {
-            val pageInput = binding.ordinalNumberEditText.text.toString()
-            val page = pageInput.toIntOrNull() ?: 1
-            currentPage = page
-            fetchCharacters(currentPage)
+            val pageNumber = binding.ordinalNumberEditText.text.toString().toIntOrNull() ?: 1
+            fetchCharacters(pageNumber)
         }
+
         binding.saveButton.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     val characters = characterAdapter.getCharacters()
-                    saveCharactersToFile(characters, "characters_page_$currentPage.txt")
+                    saveCharactersToFile(characters, "18_characters.txt")
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
                             requireContext(),
@@ -78,15 +80,41 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+        binding.buttonGoToSettings.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
+        }
+        clearDatabaseAndFetchFirstPage()
     }
 
-    private fun fetchCharacters(page: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
+    private fun observeCharacters() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            characterRepository.getCharactersFlow().collectLatest { characters ->
+                characterAdapter = CharacterAdapter(characters)
+                binding.recyclerViewChats.adapter = characterAdapter
+            }
+        }
+    }
+
+    private fun clearDatabaseAndFetchFirstPage() {
+        lifecycleScope.launch {
+            characterRepository.clearDatabase()
+
+            fetchCharacters(1)
+        }
+    }
+
+    private fun fetchCharacters(page: Int = 1) {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val characters = RetrofitClient.api.getCharacters(page = page, pageSize = 50)
+                characterRepository.fetchAndSaveCharacters(page)
+
                 withContext(Dispatchers.Main) {
-                    characterAdapter = CharacterAdapter(characters)
-                    binding.recyclerViewChats.adapter = characterAdapter
+                    Toast.makeText(
+                        requireContext(),
+                        "Персонажи страницы $page обновлены",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
